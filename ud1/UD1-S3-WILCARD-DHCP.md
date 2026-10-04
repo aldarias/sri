@@ -185,6 +185,119 @@ dhclient -v eth0
 
 En la salida aparecerán detalles del intercambio DHCP, incluido el servidor que respondió.
 
+### G. Cuando el DHCP no se puede propagar y cómo solucionarlo con `isc-dhcp-relay`
+Cuando un cliente DHCP está en una subred diferente al servidor DHCP, los mensajes DHCP se envían por broadcast y los routers no reenvían broadcasts por defecto. En ese caso, el cliente no puede localizar al servidor y no recibe una dirección IP.
+
+Esto ocurre especialmente en topologías con varios segmentos de red, VLANs o subredes distintas. La solución es instalar un relay DHCP en la red del cliente para que reciba los broadcasts y los reenvíe al servidor DHCP.
+
+**Concepto clave:**
+- El cliente envía un DHCP Discover por broadcast.
+- El relay escucha ese tráfico en la interfaz del cliente.
+- El relay encapsula y reenvía la petición al servidor DHCP.
+- El servidor responde al relay, que lo entrega de nuevo al cliente.
+
+**Configuración típica en Linux con `isc-dhcp-relay`:**
+
+1. Instalar el paquete:
+```bash
+sudo apt install isc-dhcp-relay
+```
+
+2. Configurar el relay en `/etc/default/isc-dhcp-relay`:
+```text
+SERVERS="192.168.10.10"
+INTERFACES="eth0 eth1"
+OPTIONS=""
+```
+
+- `SERVERS`: IP del servidor DHCP al que se reenvían las peticiones.
+- `INTERFACES`: interfaces por las que escucha el relay.
+
+3. Reiniciar el servicio:
+```bash
+sudo systemctl restart isc-dhcp-relay
+sudo systemctl status isc-dhcp-relay
+```
+
+4. Verificar que el relay está escuchando:
+```bash
+sudo journalctl -u isc-dhcp-relay -f
+```
+
+**Ejemplo de ejecución manual del relay:**
+```bash
+sudo dhcrelay -d -i eth0 -i eth1 192.168.10.10
+```
+
+- `-i`: interfaz de escucha.
+- `-d`: modo debug.
+- La IP final es la del servidor DHCP.
+
+#### Diagnóstico de problemas de propagación DHCP
+Estos comandos ayudan a comprobar si la petición llega al relay, si el servidor responde y si hay problemas de routing o firewall.
+
+**1. Verificar interfaces y rutas:**
+```bash
+ip a
+ip route
+```
+
+**2. Comprobar si el cliente tiene conectividad con la red del relay:**
+```bash
+ping 192.168.1.1
+```
+
+**3. Inspeccionar tráfico DHCP en la interfaz del cliente o del relay:**
+```bash
+tcpdump -i eth0 -n -vv udp port 67 or udp port 68
+```
+
+**4. Ver mensajes de debug del relay:**
+```bash
+sudo dhcrelay -d -i eth0 -i eth1 192.168.10.10
+```
+
+**5. Revisar logs del sistema:**
+```bash
+journalctl -xe | grep -i dhcp
+```
+
+**6. Confirmar que el servicio está activo:**
+```bash
+systemctl status isc-dhcp-server
+systemctl status isc-dhcp-relay
+```
+
+**7. Comprobar si hay filtrado de puertos o firewall:**
+```bash
+sudo ufw status
+sudo firewall-cmd --list-all
+```
+
+**8. Verificar el archivo de configuración del relay:**
+```bash
+cat /etc/default/isc-dhcp-relay
+```
+
+**9. Comprobar si el servidor DHCP está escuchando en UDP 67/68:**
+```bash
+ss -lunp | grep dhcp
+```
+
+**10. Probar directamente el servicio DHCP desde el relay o desde el cliente:**
+```bash
+dhclient -v eth0
+```
+
+#### Síntomas habituales
+- El cliente no recibe IP y queda en `DHCPDISCOVER`/`DORA` sin respuesta.
+- El servidor DHCP no registra ninguna concesión.
+- El relay no aparece en `journalctl` ni en `tcpdump`.
+- El cliente y el servidor están en redes distintas sin ruta adecuada.
+
+#### Recomendación
+Si el problema es de broadcast entre redes, la solución correcta suele ser instalar `isc-dhcp-relay` en el router o en un nodo intermedio, y comprobar con `tcpdump` y `journalctl` que las peticiones DHCP llegan y se reenvían correctamente.
+
 ---
 
 ## Licencia
