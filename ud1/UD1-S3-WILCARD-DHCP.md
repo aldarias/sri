@@ -152,4 +152,4 @@ Archivos donde se registran las direcciones IP concedidas a los clientes.
 
 ## Licencia
 
-[Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International](https://creativecommons.org/licenses/by-nc-nd/4.0/deed.en)
+[Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International](https://creativecommons.org/licenses/by-nc-sa/4.0/)
