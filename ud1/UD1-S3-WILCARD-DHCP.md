@@ -148,6 +148,43 @@ Archivos donde se registran las direcciones IP concedidas a los clientes.
 * **Cliente DHCP:** `/var/lib/dhcp/dhclient.leases`
 * **Servidor DHCP:** `/var/lib/dhcp/dhcpd.leases`
 
+### F. Cómo saber qué servidor DHCP asignó la configuración a un host
+Para averiguar qué servidor DHCP respondió a un equipo y le proporcionó la IP, normalmente se consulta el archivo de leases del cliente.
+
+**Desde el propio host cliente:**
+```bash
+cat /var/lib/dhcp/dhclient.leases
+```
+
+Buscas la línea con el identificador del servidor DHCP:
+```bash
+grep "dhcp-server-identifier" /var/lib/dhcp/dhclient.leases
+```
+
+Si quieres ver la concesión concreta de una MAC o una IP, puedes filtrar:
+```bash
+grep -i "00:11:22:33:44:55" /var/lib/dhcp/dhclient.leases
+```
+
+**Ejemplo de salida típica:**
+```text
+option dhcp-server-identifier 192.168.1.1;
+```
+
+Esto indica que el servidor DHCP con IP `192.168.1.1` fue el que asignó la configuración de red al host.
+
+**Desde el servidor DHCP:**
+```bash
+grep -i "00:11:22:33:44:55" /var/lib/dhcp/dhcpd.leases
+```
+
+También se puede comprobar el historial del cliente con la opción verbose:
+```bash
+dhclient -v eth0
+```
+
+En la salida aparecerán detalles del intercambio DHCP, incluido el servidor que respondió.
+
 ---
 
 ## Licencia
