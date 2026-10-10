@@ -1,10 +1,13 @@
 # Actividad Evaluable 2: Despliegue de Servidor DNS BIND9 en Linux
 
+
+
 - **Módulo:** Servicios de Red e Internet (SRI)
 - **Ciclo:** FP Grado Superior en Administración de Sistemas Informáticos en Red (ASIR)
-- **Tiempo estimado:** 60 minutos
-- **Puntuación máxima:** 10 puntos
-
+- **Autor:** Paco Aldarias
+- **Fecha:** 10/10/2026
+- **Nota:** 10
+ 
 ---
 
 ## Escenario de Trabajo
@@ -64,11 +67,28 @@ Edita el fichero de opciones globales de BIND9 (`/etc/bind/named.conf.options`) 
 | Criterio | Excelente (100%) | Aceptable (50%-75%) | Insuficiente (0%-25%) | Puntos |
 | :--- | :--- | :--- | :--- | :---: |
 | **Configuración Global (Opciones)** | Reenviadores y control de acceso (`allow-query`) configurados sin errores sintácticos. | Configuración parcial (falta reenviador o permisos de consulta). | No se ha modificado o genera fallos al arrancar el servicio. | **1.5** |
-| **Zona Directa** | Declaración correcta en `named.conf.local`. Fichero de zona completo con SOA, NS, A, CNAME y MX válidos. | Fichero de zona funcional con pequeñas deficiencias (ej. olvidó el punto final en un FQDN). | Zona mal declarada o con errores graves de sintaxis que impiden la carga. | **4.0** |
+| **Zona Directa** | Declaración correcta en `named.conf.local`. Fichero de zona completo con SOA, NS, A, CNAME y MX válidos. | Fichero de zona funcional con pequeñas deficiencias (ej. olvidó el punto final en un FQDN). | Zona mal declarada o con errores graves de sintaxis que impiden la carga. | **3.0** |
 | **Zona Inversa** | Declaración e implementación correcta de registros PTR mapeados adecuadamente a sus FQDNs. | Zona creada con errores menores en el formato IP/PTR o nombres no totalmente cualificados. | La resolución inversa no funciona o no se ha configurado la zona. | **2.5** |
 | **Validación y Diagnóstico** | Pasa las herramientas `named-checkconf/checkzone` y adjunta pruebas correctas de consultas DNS (`dig`). | El servicio arranca pero faltan pruebas de verificación o se usaron parámetros incorrectos. | No se verifica la configuración ni se aportan evidencias de funcionamiento. | **2.0** |
+| **Entrega en GitHub + video** | Se entrega el PDF en GitHub, con estructura correcta `sri/ud2/`, y se incluye el enlace al video de 5 minutos. | Se entrega el documento en GitHub sin estructura completa o el video no está claramente enlazado. | No se entrega el documento en GitHub ni se incluye el enlace al video. | **1** |
 
 ---
 
 ## Formato de Entrega
 Se entregará un único documento en formato PDF o Markdown que contenga los bloques de código o capturas de pantalla de los ficheros de configuración editados y las salidas de los comandos de verificación ejecutados en la Tarea 4.
+
+Además, se deberá incluir un video de 5 minutos en el que se explique la práctica y el funcionamiento del servidor DNS configurado. El enlace al video puede estar alojado en Google Drive que deberá indicarse claramente en la entrega de la activida.
+
+El documento PDF se subirá a un repositorio de GitHub o se entregará a través de la tarea asignada por el profesor. Si se usa GitHub. El repositorio deberá tener el nombre siguiente:
+
+- `nombreapellido` (por ejemplo: `pacoaldarias`)
+
+Y el repositorio principal será `sri`, dentro del cual se creará la carpeta:
+
+- `ud2/`
+
+Dentro de esa carpeta se almacenará el PDF final de la actividad, por ejemplo:
+
+- `sri/ud2/actividad_2.pdf`
+
+La entrega final se realizará mediante la URL pública del repositorio de GitHub donde esté ubicado el documento. Si se prefiera, también puede entregarse la URL directa al PDF publicado en GitHub. La URL del video de Drive debe incluirse en el documento o en la descripción del repositorio.
